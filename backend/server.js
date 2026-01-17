@@ -6,9 +6,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Koneksi Supabase lo yang sudah bener tadi
+// Koneksi Supabase
 const pool = new Pool({
-  connectionString: "postgresql://postgres:Renaldicahya17@db.bbjyifnzvzzxospplpa.supabase.co:5432/postgres",
+  connectionString: "postgresql://postgres:Renaldicahya17@db.bbjyifnzvrzzxospplpa.supabase.co:5432/postgres",
   ssl: { rejectUnauthorized: false } 
 });
 
@@ -25,7 +25,7 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-// Endpoint Login (Tambahkan ini juga biar dashboard lo jalan)
+// Endpoint Login
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -44,7 +44,7 @@ app.post('/api/login', async (req, res) => {
 // WAJIB UNTUK VERCEL: Export app
 module.exports = app;
 
-// Jalankan server jika di lokal
+// Jalankan server
 const PORT = 5000;
 if (process.env.NODE_ENV !== 'production') {
     app.listen(PORT, () => console.log(`Server jalan di port ${PORT}`));
