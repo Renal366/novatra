@@ -1,4 +1,4 @@
-const API_URL = 'https://novatra.vercel.app/';
+const API_URL = 'https://novatra.vercel.app/api'; // TAMBAHKAN /api DI SINI
 
 // Handle Klik Tab (Sign Up / Login)
 document.getElementById('tabSignup').addEventListener('click', () => {
@@ -17,13 +17,14 @@ document.getElementById('tabLogin').addEventListener('click', () => {
 document.getElementById('mainBtn').addEventListener('click', async () => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    const mode = document.getElementById('mainBtn').innerText.toLowerCase().replace(" ", ""); // 'login' atau 'signup'
+    // Pakai trim() biar nggak ada spasi nggak sengaja
+    const mode = document.getElementById('mainBtn').innerText.toLowerCase().trim().replace(" ", ""); 
     
     // Sesuaikan endpoint (register atau login)
     const endpoint = mode === 'signup' ? '/register' : '/login';
 
     try {
-        const res = await fetch(`${API_URL}${endpoint}`, {
+        const res = await fetch(`${API_URL}${endpoint}`, { // Hasilnya: .../api/register
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
@@ -41,6 +42,6 @@ document.getElementById('mainBtn').addEventListener('click', async () => {
             alert("Gagal: " + (data.message || "Periksa data lo!"));
         }
     } catch (err) {
-        alert("Server mati sat! Nyalain dulu backendnya.");
+        alert("Gagal terhubung ke server. Pastikan koneksi internet aman.");
     }
 });
