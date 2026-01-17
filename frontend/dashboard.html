@@ -99,31 +99,31 @@
     <div class="game-grid" id="gameContainer">
         </div>
 
-    <script>
-        const API_URL = 'https://novatra.vercel.app/api';
-        document.addEventListener('DOMContentLoaded', async () => {
-            const gameContainer = document.getElementById('gameContainer');
+  <script>
+    const API_URL = 'https://novatra.vercel.app/api';
+    document.addEventListener('DOMContentLoaded', async () => {
+        const gameContainer = document.getElementById('gameContainer');
 
-            try {
+        try {
             const res = await fetch(`${API_URL}/games`);
-            const games = await res.json(); // Pastikan ini 'res', bukan 'response' atau lainnya
-            if (games.length === 0) {
-                gameContainer.innerHTML = '<p>Data game kosong di database!</p>';
-                return;
-            }
+            const data = await res.json(); 
+
+            // Cek apakah 'data' beneran Array (daftar game)
+            if (Array.isArray(data)) {
+                if (data.length === 0) {
+                    gameContainer.innerHTML = '<p>Data game kosong di database!</p>';
+                    return;
+                }
 
                 gameContainer.innerHTML = ''; 
 
-                games.forEach(game => {
+                data.forEach(game => {
                     const card = document.createElement('div');
                     card.className = 'game-card';
-                    
                     card.onclick = () => {
                         window.location.href = `checkout.html?id=${game.id_game}`;
                     };
 
-                    // MENGGUNAKAN KOLOM 'gambar' DARI DATABASE LO
-                    // Path: img/nama_file_di_database.jpg
                     card.innerHTML = `
                         <img src="img/${game.gambar}" class="game-image" onerror="this.src='https://via.placeholder.com/150x180/2b146e/ffffff?text=${game.nama_game}'">
                         <div class="game-info">
@@ -131,15 +131,18 @@
                             <p>${game.developer || 'Developer'}</p>
                         </div>
                     `;
-                    
                     gameContainer.appendChild(card);
                 });
-
-            } catch (err) {
-                console.error("Error:", err);
-                gameContainer.innerHTML = '<p style="font-size: 10px; color: red;">Gagal konek server! Nyalain dulu backendnya.</p>';
+            } else {
+                // Jika server error (seperti error 500 tadi), lempar ke catch
+                throw new Error(data.message || "Gagal narik data dari database.");
             }
-        });
-    </script>
+
+        } catch (err) {
+            console.error("Error detail:", err);
+            gameContainer.innerHTML = `<p style="font-size: 10px; color: red;">Error: ${err.message}</p>`;
+        }
+    });
+</script>
 </body>
 </html>
