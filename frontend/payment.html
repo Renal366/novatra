@@ -40,44 +40,50 @@
     const userId = params.get('userId');
     const prodId = params.get('prodId');
 
-    async function init() {
-        if(!gameId) {
-            window.location.href = 'dashboard.html';
-            return;
-        }
-
-        // 1. Ambil Banner Game yang bener
-        try {
-            const res = await fetch(`${API_URL}/games/${gameId}`);
-            if (res.ok) {
-                const game = await res.json();
-                // Pastikan folder 'img/' di Vercel lo ada filenya
-                document.getElementById('gameBanner').src = `img/${game.banner}`;
-            }
-        } catch (err) {
-            console.error("Gagal load banner:", err);
-        }
-
-        // 2. Ambil Metode Pembayaran dari Database Supabase
-        try {
-            const res = await fetch(`${API_URL}/metode-pembayaran`);
-            const methods = await res.json();
-            
-            const container = document.getElementById('paymentContainer');
-            if (methods.length > 0) {
-                container.innerHTML = methods.map(m => `
-                    <div class="payment-item" onclick="prosesAkhir(${m.id_metode}, '${m.nama_metode}')">
-                        <img src="img/${m.gambar_logo}" alt="${m.nama_metode}">
-                        <span>${m.nama_metode}</span>
-                    </div>
-                `).join('');
-            } else {
-                container.innerHTML = "<p style='text-align:center'>Metode tidak tersedia di database.</p>";
-            }
-        } catch (err) {
-            console.error("Gagal load metode:", err);
-        }
+async function init() {
+    if(!gameId) {
+        window.location.href = 'dashboard.html';
+        return;
     }
+
+    // 1. Ambil Data Game
+    try {
+        const res = await fetch(`${API_URL}/games/${gameId}`);
+        if (res.ok) {
+            const game = await res.json();
+            // PENTING: Cek nama kolom di Supabase lo. 
+            // Kalau di phpMyAdmin namanya 'banner', pastikan di Supabase juga ada kolom 'banner'
+            const bannerPath = game.banner ? `img/${game.banner}` : 'img/default_banner.jpg';
+            document.getElementById('gameBanner').src = bannerPath; 
+        }
+    } catch (err) {
+        console.error("Gagal load banner:", err);
+    }
+
+    // 2. Ambil Metode Pembayaran (Sesuai image_f41051)
+    try {
+        const res = await fetch(`${API_URL}/metode-pembayaran`);
+        const methods = await res.json();
+        
+        const container = document.getElementById('paymentContainer');
+        // Kosongkan dulu loading text-nya
+        container.innerHTML = ""; 
+
+        methods.forEach(m => {
+            const div = document.createElement('div');
+            div.className = 'payment-item';
+            // Pakai kolom 'gambar_logo' sesuai screenshot Supabase lo
+            div.innerHTML = `
+                <img src="img/${m.gambar_logo}" alt="${m.nama_metode}">
+                <span>${m.nama_metode}</span>
+            `;
+            div.onclick = () => prosesAkhir(m.id_metode, m.nama_metode);
+            container.appendChild(div);
+        });
+    } catch (err) {
+        console.error("Gagal load metode:", err);
+    }
+}
 
     async function prosesAkhir(idMetode, namaMetode) {
         if(!userId || !prodId) {
