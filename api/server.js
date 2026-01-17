@@ -47,4 +47,15 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// Route untuk ambil semua daftar game (untuk Dashboard)
+app.get('/api/games', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM games'); // Pastikan tabel 'games' ada di Supabase
+        return res.json(result.rows);
+    } catch (err) {
+        console.error("LOG ERROR GAMES:", err.message);
+        return res.status(500).json({ success: false, message: err.message });
+    }
+});
+
 module.exports = app;
