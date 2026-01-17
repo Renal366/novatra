@@ -33,7 +33,7 @@ app.post('/api/login', async (req, res) => {
         const result = await pool.query('SELECT * FROM "user" WHERE email = $1 AND password = $2', [email, password]);
         
         if (result.rows.length > 0) {
-            res.json({ success: true, id_user: result.rows[0].id });
+            res.json({ success: true, id_user: result.rows[0].id_user });
         } else {
             res.json({ success: false, message: "Email atau password salah!" });
         }
