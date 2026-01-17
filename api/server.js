@@ -47,14 +47,15 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// Route untuk ambil semua daftar game (untuk Dashboard)
+// CARI BAGIAN INI DAN GANTI games -> game
 app.get('/api/games', async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM games'); // Pastikan tabel 'games' ada di Supabase
-        return res.json(result.rows);
+        // Query harus pakai 'game' sesuai nama tabel di Supabase lo
+        const result = await pool.query('SELECT * FROM game ORDER BY id_game ASC');
+        res.json(result.rows);
     } catch (err) {
-        console.error("LOG ERROR GAMES:", err.message);
-        return res.status(500).json({ success: false, message: err.message });
+        console.error("LOG ERROR GAME:", err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
