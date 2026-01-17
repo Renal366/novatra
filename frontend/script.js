@@ -2,20 +2,20 @@
 const API_URL = 'https://novatra.vercel.app/api'; 
 
 // Handle Klik Tab (Sign Up / Login)
-document.getElementById('tabSignup').addEventListener('click', () => {
+    document.getElementById('tabSignup').addEventListener('click', () => {
     document.getElementById('tabSignup').className = 'tab active';
     document.getElementById('tabLogin').className = 'tab inactive';
     document.getElementById('mainBtn').innerText = 'Sign up';
 });
 
-document.getElementById('tabLogin').addEventListener('click', () => {
+    document.getElementById('tabLogin').addEventListener('click', () => {
     document.getElementById('tabLogin').className = 'tab active';
     document.getElementById('tabSignup').className = 'tab inactive';
     document.getElementById('mainBtn').innerText = 'Login';
 });
 
 // Handle Submit Tombol Utama
-document.getElementById('mainBtn').addEventListener('click', async () => {
+    document.getElementById('mainBtn').addEventListener('click', async () => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const mode = document.getElementById('mainBtn').innerText.toLowerCase().replace(" ", ""); 
