@@ -1,31 +1,51 @@
+const express = require('express');
+const cors = require('cors');
 const { Pool } = require('pg');
+const app = express();
 
-// Ambil URL Koneksi dari Supabase (Settings > Database > Connection String > Node.js)
-// Ganti baris 5 di server.js lo jadi kayak gini:
+app.use(cors());
+app.use(express.json());
+
+// Koneksi Supabase lo yang sudah bener tadi
 const pool = new Pool({
   connectionString: "postgresql://postgres:renaldicahya@db.bbjyifnzvzzxospplpa.supabase.co:5432/postgres",
   ssl: { rejectUnauthorized: false } 
 });
-async function testKoneksi() {
-    try {
-        await pool.connect();
-        console.log('SUPABASE CONNECTED! Database online bro.');
-    } catch (err) {
-        console.log('DATABASE GAGAL: Cek Connection String kamu.');
-        console.error(err.message);
-    }
-}
-testKoneksi();
 
-// Ganti setiap query 'db.query' menjadi 'pool.query'
-// Dan ganti '?' menjadi '$1', '$2', dst (ciri khas PostgreSQL)
+// Endpoint Register
 app.post('/api/register', async (req, res) => {
     try {
         const { email, password } = req.body;
-        // Postgres pakai $1, $2 bukan ?
+        // Gunakan petik dua "user" karena 'user' adalah keyword di Postgres
         await pool.query('INSERT INTO "user" (email, password) VALUES ($1, $2)', [email, password]);
         res.json({ success: true, message: "Daftar berhasil!" });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// Endpoint Login (Tambahkan ini juga biar dashboard lo jalan)
+app.post('/api/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const result = await pool.query('SELECT * FROM "user" WHERE email = $1 AND password = $2', [email, password]);
+        
+        if (result.rows.length > 0) {
+            res.json({ success: true, id_user: result.rows[0].id });
+        } else {
+            res.json({ success: false, message: "Email atau password salah!" });
+        }
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
 });
+
+// WAJIB UNTUK VERCEL: Export app
+module.exports = app;
+
+// Jalankan server jika di lokal
+const PORT = 5000;
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => console.log(`Server jalan di port ${PORT}`));
+}
