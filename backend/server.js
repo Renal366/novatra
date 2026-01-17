@@ -8,10 +8,9 @@ app.use(express.json());
 
 // KONEKSI DATABASE - Gue ambil langsung dari dashboard lo (image_d6840c)
 const pool = new Pool({
-  connectionString: "postgresql://postgres:Renaldicahya17@db.bbjyifnzvrzzxospplpa.supabase.co:5432/postgres",
+  connectionString: "postgresql://postgres:renaldicahya@db.ID_PROJECT_BARU.supabase.co:5432/postgres",
   ssl: { rejectUnauthorized: false } 
 });
-
 app.post('/api/register', async (req, res) => {
     try {
         const { email, password } = req.body;
