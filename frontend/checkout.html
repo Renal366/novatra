@@ -179,6 +179,7 @@
     <button class="btn-bayar" onclick="prosesBayar()">BAYAR SEKARANG</button>
 
     <script>
+        const API_URL = 'https://novatra.vercel.app/api';
         const params = new URLSearchParams(window.location.search);
         const gameId = params.get('id') || 1; 
         let selectedProduct = null;
@@ -194,6 +195,7 @@ async function loadData() {
 
     try {
         // 1. Ambil Detail Game (Banner, Nama, & Icon) sesuai Schema
+        // GANTI INI:
         const gRes = await fetch(`${API_URL}/games/${gameId}`);
         if (!gRes.ok) throw new Error("Game tidak ditemukan");
         const game = await gRes.json();
@@ -208,7 +210,7 @@ async function loadData() {
 
         // 2. Ambil List Produk (Token/Diamond) berdasarkan ID Game
         // Gunakan route khusus produk per game yang sudah kita buat di backend
-        const pRes = await fetch(`http://localhost:5000/api/products-by-game/${gameId}`);
+        const pRes = await fetch(`${API_URL}/products-by-game/${gameId}`);
         if (!pRes.ok) throw new Error("Gagal mengambil produk");
         const products = await pRes.json();
 
